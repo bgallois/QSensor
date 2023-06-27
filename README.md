@@ -15,5 +15,5 @@ Bellow a list of features that are planned:
 - [x] Exportation to JSON
 - [x] Chart
 - [ ] Binary release
-- [ ] Tray integration
+- [x] Tray integration
 - [ ] Tray alarm for critical temperature

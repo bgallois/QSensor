@@ -19,14 +19,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.'''
+import rc_ressources
 from exporter import Exporter
 import sensors as Sensors
 from ui_qsensor import Ui_QSensor
 import PySide6.QtXml
-from PySide6.QtGui import QBrush, QColor
+from PySide6.QtGui import QIcon, QAction, QBrush, QColor
 from PySide6.QtCharts import QChart, QChartView, QLineSeries, QValueAxis
 from PySide6.QtCore import Signal, Slot, QFile, QStandardPaths, Qt, QTimer, QCoreApplication, QSettings
-from PySide6.QtWidgets import QSplitter, QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow, QTableWidget, QTableWidgetItem
+from PySide6.QtWidgets import QMenu, QSystemTrayIcon, QSplitter, QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow, QTableWidget, QTableWidgetItem
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -98,6 +99,16 @@ class QSensor(QMainWindow):
 
         self.ui.actionReset.triggered.connect(self.reset)
         self.ui.actionExport_2.triggered.connect(self.export)
+
+        self.tray = QSystemTrayIcon(QIcon(":/assets/icon.png"), self)
+        self.tray.activated.connect(self.tray_activated)
+        self.tray_menu = QMenu()
+        restore = self.tray_menu.addAction(self.tr("Restore"))
+        restore.triggered.connect(self.showNormal)
+        close = self.tray_menu.addAction(self.tr("Quit"))
+        close.triggered.connect(qApp.quit)
+        self.tray.setContextMenu(self.tray_menu)
+        self.tray.show()
 
         # Help menu
         self.ui.actionAboutQt.triggered.connect(qApp.aboutQt)
@@ -201,6 +212,17 @@ class QSensor(QMainWindow):
                                                     "/home/untitled.json",
                                                     self.tr("JSON (*.json)"))
         self.exporter.export(file_name)
+
+    def closeEvent(self, event):
+        self.tray.show()
+        self.hide()
+        self.tray.showMessage(
+            self.tr("Hey:"), self.tr("I'm there"), QIcon(), 1500)
+        event.ignore()
+
+    def tray_activated(self, reason):
+        if reason == QSystemTrayIcon.DoubleClick:
+            self.setVisible(True)
 
 
 def main():
