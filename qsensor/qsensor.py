@@ -172,6 +172,7 @@ class QSensor(QMainWindow):
         sensors = Sensors.get_all()
         self.exporter.append(sensors)
         max_temp = 0
+        critical = "Critical:\n"
         for i, (sensor, value) in enumerate(sensors.items()):
             self.series[sensor].append(self.count, value["current"])
             current_item = QTableWidgetItem(str(value["current"]))
@@ -184,9 +185,14 @@ class QSensor(QMainWindow):
             self.table.setItem(i, 1, current_item)
             if not "usage" in sensor:
                 max_temp = max(max_temp, value["current"])
+                if value["current"] >= value["critical"]:
+                    critical += sensor + \
+                        " is critical at {}\n".format(value["current"])
 
         if self.count % 10 == 0:
             self.axis_x.setRange(0, self.count + 10)
+        elif self.count % 5 == 0:
+            self.tray.showMessage("Warning", critical, QIcon(), 4000)
         self.axis_y_temp.setRange(0, max_temp + 10)
 
     def trigger_view(self, item):
