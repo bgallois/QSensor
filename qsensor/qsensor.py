@@ -24,7 +24,7 @@ from exporter import Exporter
 import sensors as Sensors
 from ui_qsensor import Ui_QSensor
 import PySide6.QtXml
-from PySide6.QtGui import QIcon, QAction, QBrush, QColor
+from PySide6.QtGui import QIcon, QAction, QBrush, QColor, QTransform
 from PySide6.QtCharts import QChart, QChartView, QLineSeries, QValueAxis
 from PySide6.QtCore import Signal, Slot, QFile, QStandardPaths, Qt, QTimer, QCoreApplication, QSettings
 from PySide6.QtWidgets import QMenu, QSystemTrayIcon, QSplitter, QApplication, QMainWindow, QFileDialog, QMessageBox, QLabel, QMdiArea, QMdiSubWindow, QTableWidget, QTableWidgetItem
@@ -63,6 +63,7 @@ class QSensor(QMainWindow):
 
         self.chart = QChart()
         self.view = QChartView(self.chart)
+        self.view.setRubberBand(QChartView.HorizontalRubberBand)
         self.splitter.addWidget(self.view)
         self.splitter.addWidget(self.table)
         self.splitter.setSizes([3*self.width()/4, self.width()/4])
@@ -190,9 +191,11 @@ class QSensor(QMainWindow):
                         " is critical at {}\n".format(value["current"])
 
         if self.count % 10 == 0:
+            self.view.setTransform(QTransform())
             self.axis_x.setRange(0, self.count + 10)
         elif self.count % 5 == 0:
-            self.tray.showMessage("Warning", critical, QIcon(), 4000)
+            if critical != "Critical:\n":
+                self.tray.showMessage("Warning", critical, QIcon(), 4000)
         self.axis_y_temp.setRange(0, max_temp + 10)
 
     def trigger_view(self, item):
