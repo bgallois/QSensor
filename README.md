@@ -16,4 +16,5 @@ Bellow a list of features that are planned:
 - [x] Chart
 - [ ] Binary release
 - [x] Tray integration
-- [ ] Tray alarm for critical temperature
+- [x] Tray alarm for critical temperature
+- [x] Rubber band zoom
