@@ -14,7 +14,7 @@ Bellow a list of features that are planned:
 - [x] Cpu usage
 - [x] Exportation to JSON
 - [x] Chart
-- [ ] Binary release
+- [x] Binary release
 - [x] Tray integration
 - [x] Tray alarm for critical temperature
 - [x] Rubber band zoom
